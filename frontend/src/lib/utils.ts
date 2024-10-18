@@ -39,3 +39,8 @@ export async function checkCurrentChain() {
     }
   }
 }
+
+export async function fetchRSSFeeds() {
+  const result = await fetch('http://localhost:3001');
+  console.log('Result', result);
+}

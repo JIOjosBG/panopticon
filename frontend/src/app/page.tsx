@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { protectData, grantAccess } from '@/lib/iexec';
+import { fetchRSSFeeds } from '@/lib/utils';
 
 interface Newsletter {
   id: number;
@@ -78,6 +79,10 @@ const newsletters: Newsletter[] = [
   }
 ];
 
+interface RSSFeed {
+  title: string;
+}
+
 const NewsletterBoard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [walletAddress, setWalletAddress] = useState<string>('');
@@ -89,6 +94,11 @@ const NewsletterBoard: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
   };
+
+    const getRSSFeeds = async () => {
+      const rssFeeds = await fetchRSSFeeds();
+      console.log('RSS Feeds', rssFeeds);
+    }
 
     // Check if there is a web3 wallet installed
     const checkIfWalletIsConnected = async () => {
@@ -200,6 +210,7 @@ const NewsletterBoard: React.FC = () => {
     // Check wallet connection on component mount
     useEffect(() => {
       checkIfWalletIsConnected();
+      getRSSFeeds();
     }, []);
 
   const formatPrice = (price: Newsletter['price']): string => {
