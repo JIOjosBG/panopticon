@@ -195,8 +195,8 @@ const NewsletterBoard: React.FC = () => {
         });
 
         // TODO getProtectedData
-        const protectedData = await protectData();
-        const grantedAccess = await grantAccess(protectedData.address);
+        const protectedData = await protectData(ethereum);
+        const grantedAccess = await grantAccess(protectedData.address, ethereum);
 
         await postNewsletterName(newsletterName);
   
