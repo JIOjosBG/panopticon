@@ -1,101 +1,182 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState } from 'react';
+import { Search, Building2, Clock, Filter, Mail, Users } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+
+interface Newsletter {
+  id: number;
+  title: string;
+  company: string;
+  description: string;
+  frequency: 'Daily' | 'Weekly' | 'Bi-weekly' | 'Monthly';
+  posted: string;
+  tags: string[];
+  promotions: boolean;
+  subscribers: number;
+  averageReadTime: string;
+  price: {
+    value: number;
+    currency: string;
+    period: 'month' | 'year' | null;
+  } | 'Free';
+}
+
+const newsletters: Newsletter[] = [
+  {
+    id: 1,
+    title: 'Web3 Weekly Insights',
+    company: 'CryptoTech News',
+    description: 'Deep dives into web3 developments, cryptocurrency trends, and blockchain technology.',
+    frequency: 'Weekly',
+    posted: '2 days ago',
+    tags: ['Web3', 'Crypto', 'Blockchain'],
+    promotions: false,
+    subscribers: 15000,
+    averageReadTime: '10 min',
+    price: 'Free'
+  },
+  {
+    id: 2,
+    title: 'DeFi Daily Digest',
+    company: 'DeFi Pulse',
+    description: 'Latest updates in decentralized finance, yield farming, and liquidity pools.',
+    frequency: 'Daily',
+    posted: '1 day ago',
+    tags: ['DeFi', 'Trading', 'Finance'],
+    promotions: true,
+    subscribers: 25000,
+    averageReadTime: '5 min',
+    price: {
+      value: 10,
+      currency: 'USD',
+      period: 'month'
+    }
+  },
+  {
+    id: 3,
+    title: 'NFT Market Analysis',
+    company: 'NFT Insights',
+    description: 'Comprehensive analysis of NFT markets, upcoming drops, and artist spotlights.',
+    frequency: 'Bi-weekly',
+    posted: '3 days ago',
+    tags: ['NFT', 'Art', 'Markets'],
+    promotions: false,
+    subscribers: 8000,
+    averageReadTime: '15 min',
+    price: {
+      value: 99,
+      currency: 'USD',
+      period: 'year'
+    }
+  }
+];
+
+const NewsletterBoard: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSubscribe = (newsletterId: number): void => {
+    // Placeholder for web3 subscription implementation
+    console.log(`Subscribe to newsletter ${newsletterId}`);
+  };
+
+  const formatPrice = (price: Newsletter['price']): string => {
+    if (price === 'Free') return 'Free';
+    return `${price.currency} ${price.value}/${price.period}`;
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="max-w-6xl mx-auto p-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold mb-2">Discover Web3 Newsletters</h1>
+        <p className="text-gray-600">Stay informed with the latest insights in blockchain and crypto</p>
+      </div>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Search and Filter Section */}
+      <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
+          <Input
+            placeholder="Search newsletters, topics, or publishers..."
+            className="pl-10 w-full"
+            value={searchTerm}
+            onChange={handleSearchChange}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+        <Button variant="outline" className="flex items-center gap-2">
+          <Filter className="h-4 w-4" />
+          Filters
+        </Button>
+      </div>
+
+      {/* Newsletter Listings */}
+      <div className="space-y-4">
+        {newsletters.map((newsletter: Newsletter) => (
+          <Card key={newsletter.id} className="hover:shadow-lg transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="flex-1">
+                  <h2 className="text-xl font-semibold mb-2">{newsletter.title}</h2>
+                  <p className="text-gray-600 mb-4">{newsletter.description}</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Building2 className="h-4 w-4" />
+                      {newsletter.company}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Mail className="h-4 w-4" />
+                      {newsletter.frequency}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Users className="h-4 w-4" />
+                      {newsletter.subscribers.toLocaleString()} subscribers
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Clock className="h-4 w-4" />
+                      {newsletter.averageReadTime} read
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-4 md:mt-0 md:text-right flex flex-col items-end">
+                  <div className="text-lg font-semibold text-green-600 mb-2">
+                    {formatPrice(newsletter.price)}
+                  </div>
+                  <Button 
+                    className="mb-4 w-32"
+                    onClick={() => handleSubscribe(newsletter.id)}
+                  >
+                    Subscribe
+                  </Button>
+                  {newsletter.promotions && (
+                    <Badge variant="secondary" className="mb-4">
+                      Promoted
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {newsletter.tags.map((tag: string) => (
+                  <Badge key={tag} variant="outline">
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
     </div>
   );
-}
+};
+
+export default NewsletterBoard;
