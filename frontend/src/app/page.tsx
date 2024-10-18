@@ -198,7 +198,7 @@ const NewsletterBoard: React.FC = () => {
         const protectedData = await protectData(ethereum);
         const grantedAccess = await grantAccess(protectedData.address, ethereum);
 
-        await postNewsletterName(newsletterName);
+        await postNewsletterName(walletAddress, newsletterName);
   
       } catch (error: any) {
         console.error(error);
@@ -281,7 +281,7 @@ const NewsletterBoard: React.FC = () => {
                   </div>
                   <Button 
                     className="mb-4 w-32"
-                    onClick={() => handleSubscribe(newsletter.id)}
+                    onClick={() => handleSubscribe(newsletter.company)}
                   >
                     Subscribe
                   </Button>
