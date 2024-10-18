@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
+import { protectData, grantAccess } from '@/lib/iexec';
 
 interface Newsletter {
   id: number;
@@ -182,6 +183,9 @@ const NewsletterBoard: React.FC = () => {
           title: "Subscription Initiated",
           description: "Please confirm the transaction in MetaMask",
         });
+
+        const protectedData = await protectData();
+        const grantedAccess = await grantAccess(protectedData.address);
   
       } catch (error: any) {
         console.error(error);
