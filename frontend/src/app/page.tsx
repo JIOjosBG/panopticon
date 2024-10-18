@@ -3,13 +3,14 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { Search, Building2, Clock, Filter, Mail, Users } from 'lucide-react';
+import { IExecDataProtector, type ProtectDataParams } from '@iexec/dataprotector';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { protectData, grantAccess } from '@/lib/iexec';
-import { fetchRSSFeeds, postNewsletterName } from '@/lib/utils';
+import { grantAccess } from '@/lib/iexec';
+import { fetchRSSFeeds, postNewsletterName, checkCurrentChain } from '@/lib/utils';
 
 interface Newsletter {
   id: number;
@@ -83,11 +84,21 @@ interface RSSFeed {
   title: string;
 }
 
+const { ethereum } = window as any;
+const iExecDataProtectorClient = new IExecDataProtector(ethereum);
+
 const NewsletterBoard: React.FC = () => {
+  const [errorMessage, setErrorMessage] = useState('');
+
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
+
+  // protectData()
+  const [protectedDataAddress, setProtectedDataAddress] = useState('');
+  const [isLoadingProtectData, setIsLoadingProtectData] = useState(false);
+  const [protectDataSuccess, setProtectDataSuccess] = useState(false);
 
   const { toast } = useToast()
 
@@ -194,9 +205,8 @@ const NewsletterBoard: React.FC = () => {
           description: "Please confirm the transaction in MetaMask",
         });
 
-        // TODO getProtectedData
-        const protectedData = await protectData(ethereum);
-        const grantedAccess = await grantAccess(protectedData.address, ethereum);
+        await protectData();
+        const grantedAccess = await grantAccess(protectedDataAddress, ethereum);
 
         await postNewsletterName(walletAddress, newsletterName);
   
@@ -215,6 +225,39 @@ const NewsletterBoard: React.FC = () => {
       checkIfWalletIsConnected();
       getRSSFeeds();
     }, []);
+
+    const protectData = async () => {
+      setErrorMessage('');
+      try {
+        checkIfWalletIsConnected();
+      } catch (err) {
+        setErrorMessage('Please install MetaMask');
+        return;
+      }
+      await checkCurrentChain();
+      try {
+        setProtectDataSuccess(false);
+        setIsLoadingProtectData(true); // Show loader
+        const protectedDataResponse =
+          await iExecDataProtectorClient.core.protectData({
+            data: {
+              // A binary "file" field must be used if you use the app provided by iExec
+              file: new TextEncoder().encode(
+                'DataProtector Sharing > Sandbox test!'
+              ),
+            },
+            name: 'DataProtector Sharing Sandbox - Test protected data',
+          });
+        console.log('protectedDataResponse', protectedDataResponse);
+  
+        setProtectedDataAddress(protectedDataResponse.address);
+        setIsLoadingProtectData(false); // hide loader
+        setProtectDataSuccess(true); // show success icon
+      } catch (e) {
+        setIsLoadingProtectData(false); // hide loader
+        console.error(e);
+      }
+    };
 
   const formatPrice = (price: Newsletter['price']): string => {
     if (price === 'Free') return 'Free';
