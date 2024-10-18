@@ -1,11 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { ethers } from 'ethers';
 import { Search, Building2, Clock, Filter, Mail, Users } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useToast } from '@/hooks/use-toast';
 
 interface Newsletter {
   id: number;
@@ -77,15 +79,124 @@ const newsletters: Newsletter[] = [
 
 const NewsletterBoard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [walletAddress, setWalletAddress] = useState<string>('');
+  const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [isConnecting, setIsConnecting] = useState<boolean>(false);
+
+  const { toast } = useToast()
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
   };
 
-  const handleSubscribe = (newsletterId: number): void => {
-    // Placeholder for web3 subscription implementation
-    console.log(`Subscribe to newsletter ${newsletterId}`);
-  };
+    // Check if there is a web3 wallet installed
+    const checkIfWalletIsConnected = async () => {
+      try {
+        const { ethereum } = window as any;
+        
+        if (!ethereum) {
+          toast({
+            title: "Web3 wallet not found",
+            description: "Please install a web3 browser extension",
+            variant: "destructive",
+          });
+          return false;
+        }
+  
+        // Check if we're authorized to access the user's wallet
+        const accounts = await ethereum.request({ method: 'eth_accounts' });
+        
+        if (accounts.length !== 0) {
+          const account = accounts[0];
+          setWalletAddress(account);
+          setIsConnected(true);
+          return true;
+        } else {
+          setIsConnected(false);
+          return false;
+        }
+      } catch (error) {
+        console.error(error);
+        return false;
+      }
+    };
+  
+    // Connect wallet handler
+    const connectWallet = async () => {
+      try {
+        setIsConnecting(true);
+        const { ethereum } = window as any;
+  
+        if (!ethereum) {
+          toast({
+            title: "MetaMask not found",
+            description: "Please install MetaMask browser extension",
+            variant: "destructive",
+          });
+          return;
+        }
+  
+        // Request account access
+        const accounts = await ethereum.request({
+          method: 'eth_requestAccounts',
+        });
+  
+        setWalletAddress(accounts[0]);
+        setIsConnected(true);
+        
+        toast({
+          title: "Wallet Connected",
+          description: "Successfully connected to MetaMask",
+        });
+        
+      } catch (error: any) {
+        console.error(error);
+        toast({
+          title: "Connection Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } finally {
+        setIsConnecting(false);
+      }
+    };
+  
+    // Handle newsletter subscription
+    const handleSubscribe = async (newsletterId: number) => {
+      connectWallet();
+      if (!isConnected) {
+        toast({
+          title: "Wallet Not Connected",
+          description: "Please connect your wallet first",
+          variant: "destructive",
+        });
+        return;
+      }
+  
+      try {
+        const { ethereum } = window as any;
+        const provider = new ethers.providers.Web3Provider(ethereum);
+        const signer = provider.getSigner();
+  
+        toast({
+          title: "Subscription Initiated",
+          description: "Please confirm the transaction in MetaMask",
+        });
+  
+      } catch (error: any) {
+        console.error(error);
+        toast({
+          title: "Subscription Failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    };
+  
+    // Check wallet connection on component mount
+    useEffect(() => {
+      checkIfWalletIsConnected();
+    }, []);
 
   const formatPrice = (price: Newsletter['price']): string => {
     if (price === 'Free') return 'Free';
