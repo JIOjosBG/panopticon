@@ -44,3 +44,26 @@ export async function fetchRSSFeeds() {
   const result = await fetch('http://localhost:3001');
   console.log('Result', result);
 }
+
+export async function postNewsletterName(newsletterName: string) {
+  try {
+    const response = await fetch('http://localhost:3001/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ newsletterName: newsletterName }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+    
+  } catch (error) {
+    console.error('Error posting newsletter name:', error);
+    throw error;
+  }
+};

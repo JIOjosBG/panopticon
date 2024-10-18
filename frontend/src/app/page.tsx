@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { protectData, grantAccess } from '@/lib/iexec';
-import { fetchRSSFeeds } from '@/lib/utils';
+import { fetchRSSFeeds, postNewsletterName } from '@/lib/utils';
 
 interface Newsletter {
   id: number;
@@ -173,7 +173,7 @@ const NewsletterBoard: React.FC = () => {
     };
   
     // Handle newsletter subscription
-    const handleSubscribe = async (newsletterId: number) => {
+    const handleSubscribe = async (newsletterName: string) => {
       connectWallet();
       if (!isConnected) {
         toast({
@@ -194,8 +194,11 @@ const NewsletterBoard: React.FC = () => {
           description: "Please confirm the transaction in MetaMask",
         });
 
+        // TODO getProtectedData
         const protectedData = await protectData();
         const grantedAccess = await grantAccess(protectedData.address);
+
+        await postNewsletterName(newsletterName);
   
       } catch (error: any) {
         console.error(error);
