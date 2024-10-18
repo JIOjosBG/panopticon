@@ -16,3 +16,9 @@ export async function fetchAllRssFeeds() {
         return parser.parseURL(feed);
     }))
 }
+
+
+// export async function worker(){
+//     const allContent = await fetchAllRssFeeds()
+//     const emailsToSendToday
+// }
