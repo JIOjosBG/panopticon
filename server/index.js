@@ -1,4 +1,5 @@
 import express from 'express'
+import cors from 'cors';
 import { fetchAllRssFeeds, } from './utils.js'
 import { MongoClient } from 'mongodb';
 import {isAddress} from 'ethers'
@@ -13,9 +14,15 @@ const getClient = async ()=>{
 }
 
 const app = express();
-const port = 3000;
+const port = 3001;
 
 app.use(express.json());
+
+app.use(cors({
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 app.get('/', async (req, res) => {
     let feeds = await fetchAllRssFeeds()
