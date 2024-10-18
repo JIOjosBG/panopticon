@@ -1,20 +1,12 @@
 import express from 'express'
 import cors from 'cors';
-import { fetchAllRssFeeds, } from './utils.js'
-import { MongoClient } from 'mongodb';
+import { fetchAllRssFeeds, worker} from './utils.js'
 import {isAddress} from 'ethers'
-
-const MONGO_URI = 'mongodb://localhost:27017'
-const client = new MongoClient(MONGO_URI);
-
-const getClient = async ()=>{
-    await client.connect()
-    return client.db('panopticon');
-
-}
+import { getClient } from './db.js';
 
 const app = express();
 const port = 3001;
+
 
 app.use(express.json());
 
@@ -44,5 +36,5 @@ app.listen(port, () => {
 })
 
 // setInterval(()=>{
-    // Worker()
-// }, 1000**60)
+    worker()
+// }, 1000*60 )
