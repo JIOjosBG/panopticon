@@ -43,11 +43,6 @@ export async function checkCurrentChain() {
   }
 }
 
-export async function fetchRSSFeeds() {
-  const result = await fetch('http://localhost:3001');
-  console.log('Result', result);
-}
-
 export async function postNewsletterName(user: string, newsletterName: string, protectedData: string) {
   try {
     const response = await fetch('http://localhost:3001/subscribe', {

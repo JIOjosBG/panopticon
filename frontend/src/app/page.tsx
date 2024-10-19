@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from '@/hooks/use-toast';
 import { grantAccess } from '@/lib/iexec';
-import { fetchRSSFeeds, postNewsletterName, checkCurrentChain } from '@/lib/utils';
+import { postNewsletterName, checkCurrentChain } from '@/lib/utils';
 import bannerImage from '../components/ui/banner.png'; // Tell webpack this JS file uses this image
 import panopticonTitle from '../components/ui/panopticon.svg'; // Tell webpack this JS file uses this image
 import Image from 'next/image'
@@ -90,11 +90,6 @@ const NewsletterBoard: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
   };
-
-  const getRSSFeeds = async () => {
-    const rssFeeds = await fetchRSSFeeds();
-    console.log('RSS Feeds', rssFeeds);
-  }
 
   // Check if there is a web3 wallet installed
   const checkIfWalletIsConnected = async () => {
@@ -212,7 +207,6 @@ const NewsletterBoard: React.FC = () => {
   // Check wallet connection on component mount
   useEffect(() => {
     checkIfWalletIsConnected();
-    getRSSFeeds();
   }, []);
 
   const protectData = async () => {
