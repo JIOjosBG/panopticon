@@ -26,6 +26,13 @@ app.post('/subscribe', async (req, res) => {
     if(!isAddress(user)) return res.status(500).json({success:false, error: "user is not a valid address"})
     if(!newsletter) return res.status(500).json({success:false, error: "No newsletter provided"})
     const db = await getClient()
+
+    // Check if collection exists, create if it doesn't
+    const collections = await db.listCollections({name: 'subscriptions'}).toArray()
+    if (collections.length === 0) {
+        await db.createCollection('subscriptions')
+    }
+
     const collection = db.collection('subscriptions');
     await collection.updateOne({user}, { $addToSet: { subscriptions: newsletter }}, {upsert:true});
     return res.json({success:true})
