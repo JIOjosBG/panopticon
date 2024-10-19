@@ -9,6 +9,14 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Toaster } from "@/components/ui/toaster"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { useToast } from '@/hooks/use-toast';
 import { grantAccess } from '@/lib/iexec';
 import { fetchRSSFeeds, postNewsletterName, checkCurrentChain } from '@/lib/utils';
@@ -98,6 +106,7 @@ const NewsletterBoard: React.FC = () => {
 
   // email
   const [email, setEmail] = useState<string>('');
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // protectData()
   const [protectedDataAddress, setProtectedDataAddress] = useState('');
@@ -110,165 +119,175 @@ const NewsletterBoard: React.FC = () => {
     setSearchTerm(e.target.value);
   };
 
-    const getRSSFeeds = async () => {
-      const rssFeeds = await fetchRSSFeeds();
-      console.log('RSS Feeds', rssFeeds);
-    }
+  const getRSSFeeds = async () => {
+    const rssFeeds = await fetchRSSFeeds();
+    console.log('RSS Feeds', rssFeeds);
+  }
 
-    // Check if there is a web3 wallet installed
-    const checkIfWalletIsConnected = async () => {
-      try {
-        const { ethereum } = window as any;
-        
-        if (!ethereum) {
-          toast({
-            title: "Web3 wallet not found",
-            description: "Please install a web3 browser extension",
-            variant: "destructive",
-          });
-          return false;
-        }
-  
-        // Check if we're authorized to access the user's wallet
-        const accounts = await ethereum.request({ method: 'eth_accounts' });
-        
-        if (accounts.length !== 0) {
-          const account = accounts[0];
-          setWalletAddress(account);
-          setIsConnected(true);
-          return true;
-        } else {
-          setIsConnected(false);
-          return false;
-        }
-      } catch (error) {
-        console.error(error);
+  // Check if there is a web3 wallet installed
+  const checkIfWalletIsConnected = async () => {
+    try {
+      const { ethereum } = window as any;
+      
+      if (!ethereum) {
+        toast({
+          title: "Web3 wallet not found",
+          description: "Please install a web3 browser extension",
+          variant: "destructive",
+        });
         return false;
       }
-    };
-  
-    // Connect wallet handler
-    const connectWallet = async () => {
-      try {
-        setIsConnecting(true);
-        const { ethereum } = window as any;
-  
-        if (!ethereum) {
-          toast({
-            title: "MetaMask not found",
-            description: "Please install MetaMask browser extension",
-            variant: "destructive",
-          });
-          return;
-        }
-  
-        // Request account access
-        const accounts = await ethereum.request({
-          method: 'eth_requestAccounts',
-        });
-  
-        setWalletAddress(accounts[0]);
+
+      // Check if we're authorized to access the user's wallet
+      const accounts = await ethereum.request({ method: 'eth_accounts' });
+      
+      if (accounts.length !== 0) {
+        const account = accounts[0];
+        setWalletAddress(account);
         setIsConnected(true);
-        
-        toast({
-          title: "Wallet Connected",
-          description: "Successfully connected to MetaMask",
-        });
-        
-      } catch (error: any) {
-        console.error(error);
-        toast({
-          title: "Connection Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      } finally {
-        setIsConnecting(false);
+        return true;
+      } else {
+        setIsConnected(false);
+        return false;
       }
-    };
-  
-    // Handle newsletter subscription
-    const handleSubscribe = async (newsletterName: string) => {
-      connectWallet();
-      if (email === '') {
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
+
+  // Connect wallet handler
+  const connectWallet = async () => {
+    try {
+      setIsConnecting(true);
+      const { ethereum } = window as any;
+
+      if (!ethereum) {
         toast({
-          title: "Input your email",
-          description: "It will be securely encrypted. No parties will have access to it",
-        });
-        return;
-      }
-      if (!isConnected) {
-        toast({
-          title: "Wallet Not Connected",
-          description: "Please connect your wallet first",
+          title: "MetaMask not found",
+          description: "Please install MetaMask browser extension",
           variant: "destructive",
         });
         return;
       }
-  
-      try {
-        const { ethereum } = window as any;
-        const provider = new ethers.providers.Web3Provider(ethereum);
-        const signer = provider.getSigner();
-  
-        toast({
-          title: "Subscription Initiated",
-          description: "Please confirm the transaction in MetaMask",
-        });
 
-        await protectData();
-        const grantedAccess = await grantAccess(protectedDataAddress, ethereum);
+      // Request account access
+      const accounts = await ethereum.request({
+        method: 'eth_requestAccounts',
+      });
 
-        await postNewsletterName(walletAddress, newsletterName);
+      setWalletAddress(accounts[0]);
+      setIsConnected(true);
+      
+      toast({
+        title: "Wallet Connected",
+        description: "Successfully connected to MetaMask",
+      });
+      
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Connection Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsConnecting(false);
+    }
+  };
+
+  // Handle newsletter subscription
+  const handleSubscribe = async (newsletterName: string) => {
+    connectWallet();
+    if (email === '') {
+      setIsDialogOpen(true);
+      return;
+    }
+    if (!isConnected) {
+      toast({
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { ethereum } = window as any;
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const signer = provider.getSigner();
+
+      toast({
+        title: "Subscription Initiated",
+        description: "Please confirm the transaction in MetaMask",
+      });
+
+      await protectData();
+      const grantedAccess = await grantAccess(protectedDataAddress, ethereum);
+
+      await postNewsletterName(walletAddress, newsletterName);
+
+    } catch (error: any) {
+      console.error(error);
+      toast({
+        title: "Subscription Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
   
-      } catch (error: any) {
-        console.error(error);
-        toast({
-          title: "Subscription Failed",
-          description: error.message,
-          variant: "destructive",
-        });
-      }
-    };
-  
-    // Check wallet connection on component mount
-    useEffect(() => {
+  // Check wallet connection on component mount
+  useEffect(() => {
+    checkIfWalletIsConnected();
+    getRSSFeeds();
+  }, []);
+
+  const protectData = async () => {
+    setErrorMessage('');
+    try {
       checkIfWalletIsConnected();
-      getRSSFeeds();
-    }, []);
+    } catch (err) {
+      setErrorMessage('Please install MetaMask');
+      return;
+    }
+    await checkCurrentChain();
+    try {
+      setProtectDataSuccess(false);
+      setIsLoadingProtectData(true); // Show loader
+      const protectedDataResponse =
+        await iExecDataProtectorClient.core.protectData({
+          data: {
+            // A binary "file" field must be used if you use the app provided by iExec
+            file: new TextEncoder().encode(
+              'DataProtector Sharing > Sandbox test!'
+            ),
+          },
+          name: 'DataProtector Sharing Sandbox - Test protected data',
+        });
+      console.log('protectedDataResponse', protectedDataResponse);
 
-    const protectData = async () => {
-      setErrorMessage('');
-      try {
-        checkIfWalletIsConnected();
-      } catch (err) {
-        setErrorMessage('Please install MetaMask');
-        return;
-      }
-      await checkCurrentChain();
-      try {
-        setProtectDataSuccess(false);
-        setIsLoadingProtectData(true); // Show loader
-        const protectedDataResponse =
-          await iExecDataProtectorClient.core.protectData({
-            data: {
-              // A binary "file" field must be used if you use the app provided by iExec
-              file: new TextEncoder().encode(
-                'DataProtector Sharing > Sandbox test!'
-              ),
-            },
-            name: 'DataProtector Sharing Sandbox - Test protected data',
-          });
-        console.log('protectedDataResponse', protectedDataResponse);
-  
-        setProtectedDataAddress(protectedDataResponse.address);
-        setIsLoadingProtectData(false); // hide loader
-        setProtectDataSuccess(true); // show success icon
-      } catch (e) {
-        setIsLoadingProtectData(false); // hide loader
-        console.error(e);
-      }
-    };
+      setProtectedDataAddress(protectedDataResponse.address);
+      setIsLoadingProtectData(false); // hide loader
+      setProtectDataSuccess(true); // show success icon
+    } catch (e) {
+      setIsLoadingProtectData(false); // hide loader
+      console.error(e);
+    }
+  };
+
+  const handleEmailSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (email) {
+      setIsDialogOpen(false);
+    } else {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address",
+        variant: "destructive",
+      });
+    }
+  };
 
   const formatPrice = (price: Newsletter['price']): string => {
     if (price === 'Free') return 'Free';
@@ -358,6 +377,31 @@ const NewsletterBoard: React.FC = () => {
           </Card>
         ))}
       </div>
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Enter your email</DialogTitle>
+            <DialogDescription>
+              Your email will be securely encrypted. No other parties will have access to it.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEmailSubmit}>
+            <div className="grid gap-4 py-4">
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="col-span-3"
+              />
+            </div>
+            <DialogFooter>
+              <Button type="submit">Save</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
       <Toaster/>
     </div>
   );
