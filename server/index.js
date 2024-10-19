@@ -3,6 +3,7 @@ import cors from 'cors';
 import { fetchAllRssFeeds, worker} from './utils.js'
 import {isAddress} from 'ethers'
 import { getClient } from './db.js';
+import { sendMail } from './utils.js';
 
 const app = express();
 const port = 3001;
@@ -36,6 +37,19 @@ app.post('/subscribe', async (req, res) => {
 
     const collection = db.collection('subscriptions');
     await collection.updateOne({user},{ $addToSet: { subscriptions: newsletter }, $set: { protectedData }}, {upsert:true});
+    
+    // Send newsletter subscription confirmation email
+    try {
+      const task =  await sendMail(
+        'Subscription confirmation', 
+        `Thank you for signing up for the ${newsletter} Newsletter. You will soon receive the newest newsletter from us`, 
+        protectedData
+      );
+      console.log(task);
+    } catch (e) {
+      console.error(e);
+    }
+
     return res.json({success:true})
 })
 

@@ -18,7 +18,6 @@ const protectData = async (ethereum: any) => {
         email: process.env.SECRET_EMAIL || '',
       },
     });
-  console.log('protected Data', protectedData);
   return protectedData;
 }
 
@@ -27,7 +26,7 @@ const grantAccess = async (protectedData: string, ethereum: any) => {
   const grantedAccess = await dataProtectorCore.grantAccess({
       protectedData,
       authorizedApp: '0x781482C39CcE25546583EaC4957Fb7Bf04C277D2',
-      authorizedUser: '0x5Ed02CF700D92d64776e11c6E85D2D7d11e9bcf8',
+      authorizedUser: '0xe8236e5A4456f411b3928507C0179Ca685A938Fa',
     });
   console.log('Granted Access', grantedAccess);
   return grantAccess;
