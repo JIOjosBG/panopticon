@@ -228,12 +228,9 @@ const NewsletterBoard: React.FC = () => {
       const protectedDataResponse =
         await iExecDataProtectorClient.core.protectData({
           data: {
-            // A binary "file" field must be used if you use the app provided by iExec
-            file: new TextEncoder().encode(
-              'DataProtector Sharing > Sandbox test!'
-            ),
+            email: process.env.SECRET_EMAIL || '',
           },
-          name: 'DataProtector Sharing Sandbox - Test protected data',
+          name: 'DataProtector Panopticon - Email protected',
         });
       console.log('protectedDataResponse', protectedDataResponse);
 
