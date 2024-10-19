@@ -20,7 +20,8 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { grantAccess } from '@/lib/iexec';
 import { fetchRSSFeeds, postNewsletterName, checkCurrentChain } from '@/lib/utils';
-
+import bannerImage from '../components/ui/banner.png'; // Tell webpack this JS file uses this image
+import Image from 'next/image'
 interface Newsletter {
   id: number;
   title: string;
@@ -263,12 +264,15 @@ const NewsletterBoard: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold mb-2">Discover Web3 Newsletters</h1>
-        <p className="text-gray-600">Stay informed with the latest insights in blockchain and crypto</p>
-      </div>
 
+      <div className="absolute top-[591px] left-[1229px] rounded-31xl bg-khaki flex flex-row items-end justify-end py-space-050 px-space-200 text-right text-xs text-gray-200">
+        <div className="relative leading-[20px]">Promoted</div>
+      </div>
+        <Image
+          className="pb-4"
+          alt=""
+          src={bannerImage}
+        />
       {/* Search and Filter Section */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="flex-1 relative">
@@ -289,6 +293,7 @@ const NewsletterBoard: React.FC = () => {
       {/* Newsletter Listings */}
       <div className="space-y-4">
         {Object.keys(newsletters).length && Object.values(newsletters).map((newsletter) => (
+
           <Card key={newsletter.title} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row justify-between">
