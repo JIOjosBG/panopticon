@@ -68,7 +68,8 @@ const NewsletterBoard: React.FC = () => {
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
-  const [newsletters,setNewsletters] = useState<Newsletters>({})
+  const [newsletters, setNewsletters] = useState<Newsletters>({});
+  const [subscriptions, setSubcriptions] = useState<string[]>([]);
   // email
   const [email, setEmail] = useState<string>('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -193,7 +194,8 @@ const NewsletterBoard: React.FC = () => {
       const grantedAccess = await grantAccess(protectedDataAddress, ethereum);
 
       await postNewsletterName(walletAddress, newsletterName, protectedDataAddress);
-
+      
+      setSubcriptions(subscriptions.concat(newsletterName));
     } catch (error: any) {
       console.error(error);
       toast({
@@ -328,12 +330,22 @@ const NewsletterBoard: React.FC = () => {
                     10 USD
                     {/* {formatPrice(newsletter.price)} */}
                   </div>
-                  <Button 
-                    className="mb-4 w-32"
-                    onClick={() => handleSubscribe(newsletter.title)}
-                  >
-                    Subscribe
-                  </Button>
+                  {subscriptions.includes(newsletter.title) ? (
+                    <Button 
+                      className="mb-4 w-32"
+                      variant="secondary"  // or any other variant you prefer for subscribed state
+                      disabled
+                    >
+                      Subscribed
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="mb-4 w-32"
+                      onClick={() => handleSubscribe(newsletter.title)}
+                    >
+                      Subscribe
+                    </Button>
+                  )}
                   
                   <Badge variant="secondary" className="mb-4">
                     Promoted
