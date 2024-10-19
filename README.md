@@ -33,4 +33,8 @@ Once both transactions have been signed and are confirmed on the blockchain, you
 
 - There will be a different page for companies to send their newsletters to their subscribers directly from our UI
 
+- Get the current subscriptions directly from the blockchain instead of a database
+
+- Mark the subscribed newsletters as "Subscribed" on the UI
+
 - Will add many more memes (specifically, cats with thumbs)
