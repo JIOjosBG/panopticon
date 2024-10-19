@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Toaster } from "@/components/ui/toaster"
 import { useToast } from '@/hooks/use-toast';
 import { grantAccess } from '@/lib/iexec';
 import { fetchRSSFeeds, postNewsletterName, checkCurrentChain } from '@/lib/utils';
@@ -94,6 +95,9 @@ const NewsletterBoard: React.FC = () => {
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
+
+  // email
+  const [email, setEmail] = useState<string>('');
 
   // protectData()
   const [protectedDataAddress, setProtectedDataAddress] = useState('');
@@ -186,6 +190,13 @@ const NewsletterBoard: React.FC = () => {
     // Handle newsletter subscription
     const handleSubscribe = async (newsletterName: string) => {
       connectWallet();
+      if (email === '') {
+        toast({
+          title: "Input your email",
+          description: "It will be securely encrypted. No parties will have access to it",
+        });
+        return;
+      }
       if (!isConnected) {
         toast({
           title: "Wallet Not Connected",
@@ -347,6 +358,7 @@ const NewsletterBoard: React.FC = () => {
           </Card>
         ))}
       </div>
+      <Toaster/>
     </div>
   );
 };
