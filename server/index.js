@@ -57,6 +57,7 @@ app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 })
 
-// setInterval(()=>{
+setInterval(()=>{
+    console.log('ran worker')
     worker()
-// }, 1000*60 )
+}, 1000*60 )
