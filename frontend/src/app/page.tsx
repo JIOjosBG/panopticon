@@ -39,58 +39,21 @@ interface Newsletter {
   } | 'Free';
 }
 
-const newsletters: Newsletter[] = [
-  {
-    id: 1,
-    title: 'Web3 Weekly Insights',
-    company: 'CryptoTech News',
-    description: 'Deep dives into web3 developments, cryptocurrency trends, and blockchain technology.',
-    frequency: 'Weekly',
-    posted: '2 days ago',
-    tags: ['Web3', 'Crypto', 'Blockchain'],
-    promotions: false,
-    subscribers: 15000,
-    averageReadTime: '10 min',
-    price: 'Free'
-  },
-  {
-    id: 2,
-    title: 'DeFi Daily Digest',
-    company: 'DeFi Pulse',
-    description: 'Latest updates in decentralized finance, yield farming, and liquidity pools.',
-    frequency: 'Daily',
-    posted: '1 day ago',
-    tags: ['DeFi', 'Trading', 'Finance'],
-    promotions: true,
-    subscribers: 25000,
-    averageReadTime: '5 min',
-    price: {
-      value: 10,
-      currency: 'USD',
-      period: 'month'
-    }
-  },
-  {
-    id: 3,
-    title: 'NFT Market Analysis',
-    company: 'NFT Insights',
-    description: 'Comprehensive analysis of NFT markets, upcoming drops, and artist spotlights.',
-    frequency: 'Bi-weekly',
-    posted: '3 days ago',
-    tags: ['NFT', 'Art', 'Markets'],
-    promotions: false,
-    subscribers: 8000,
-    averageReadTime: '15 min',
-    price: {
-      value: 99,
-      currency: 'USD',
-      period: 'year'
-    }
+interface Newsletters{
+  [name: string]: {
+    feedUrl: string,
+    image: {
+    link: string,
+    url: string,
+    title: string
+    },
+    title: string,
+    description: string,
+    generator: string,
+    link: string,
+    language: string,
+    lastBuildDate: string
   }
-];
-
-interface RSSFeed {
-  title: string;
 }
 
 const { ethereum } = window as any;
@@ -103,7 +66,7 @@ const NewsletterBoard: React.FC = () => {
   const [walletAddress, setWalletAddress] = useState<string>('');
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
-
+  const [newsletters,setNewsletters] = useState<Newsletters>({})
   // email
   const [email, setEmail] = useState<string>('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -114,6 +77,13 @@ const NewsletterBoard: React.FC = () => {
   const [protectDataSuccess, setProtectDataSuccess] = useState(false);
 
   const { toast } = useToast()
+
+  useEffect(()=>{
+    fetch('http://localhost:3001/').then(r=>r.json()).then(r=>{
+      console.log(r)
+      setNewsletters(r)
+    }).catch(console.log)
+  },[])
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
@@ -321,8 +291,8 @@ const NewsletterBoard: React.FC = () => {
 
       {/* Newsletter Listings */}
       <div className="space-y-4">
-        {newsletters.map((newsletter: Newsletter) => (
-          <Card key={newsletter.id} className="hover:shadow-lg transition-shadow">
+        {Object.keys(newsletters).length && Object.values(newsletters).map((newsletter) => (
+          <Card key={newsletter.title} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex flex-col md:flex-row justify-between">
                 <div className="flex-1">
@@ -331,43 +301,47 @@ const NewsletterBoard: React.FC = () => {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Building2 className="h-4 w-4" />
-                      {newsletter.company}
+                      {newsletter.title}
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Mail className="h-4 w-4" />
-                      {newsletter.frequency}
+                      Weekly
+                      {/* {newsletter.frequency} */}
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Users className="h-4 w-4" />
-                      {newsletter.subscribers.toLocaleString()} subscribers
+                      {/* {newsletter.subscribers.toLocaleString()} subscribers */}
+                      asd
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Clock className="h-4 w-4" />
-                      {newsletter.averageReadTime} read
+                      {/* {newsletter.averageReadTime} read */}
+                      read time
                     </div>
                   </div>
                 </div>
                 
                 <div className="mt-4 md:mt-0 md:text-right flex flex-col items-end">
                   <div className="text-lg font-semibold text-green-600 mb-2">
-                    {formatPrice(newsletter.price)}
+                    10 USD
+                    {/* {formatPrice(newsletter.price)} */}
                   </div>
                   <Button 
                     className="mb-4 w-32"
-                    onClick={() => handleSubscribe(newsletter.company)}
+                    onClick={() => handleSubscribe(newsletter.title)}
                   >
                     Subscribe
                   </Button>
-                  {newsletter.promotions && (
-                    <Badge variant="secondary" className="mb-4">
-                      Promoted
-                    </Badge>
-                  )}
+                  
+                  <Badge variant="secondary" className="mb-4">
+                    Promoted
+                  </Badge>
+                  
                 </div>
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
-                {newsletter.tags.map((tag: string) => (
+                {['crypto','web3', 'finance'].map((tag: string) => (
                   <Badge key={tag} variant="outline">
                     {tag}
                   </Badge>
