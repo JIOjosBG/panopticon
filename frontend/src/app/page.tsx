@@ -225,7 +225,7 @@ const NewsletterBoard: React.FC = () => {
       await protectData();
       const grantedAccess = await grantAccess(protectedDataAddress, ethereum);
 
-      await postNewsletterName(walletAddress, newsletterName);
+      await postNewsletterName(walletAddress, newsletterName, protectedDataAddress);
 
     } catch (error: any) {
       console.error(error);

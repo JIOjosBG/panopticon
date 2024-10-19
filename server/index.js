@@ -22,8 +22,9 @@ app.get('/', async (req, res) => {
 })
 
 app.post('/subscribe', async (req, res) => {
-    const {user,newsletter} = req.body
+    const {user, protectedData, newsletter} = req.body
     if(!isAddress(user)) return res.status(500).json({success:false, error: "user is not a valid address"})
+    if(!protectedData) return res.status(500).json({success:false, error: "No protectedData provided"})
     if(!newsletter) return res.status(500).json({success:false, error: "No newsletter provided"})
     const db = await getClient()
 
@@ -34,7 +35,7 @@ app.post('/subscribe', async (req, res) => {
     }
 
     const collection = db.collection('subscriptions');
-    await collection.updateOne({user}, { $addToSet: { subscriptions: newsletter }}, {upsert:true});
+    await collection.updateOne({user},{ $addToSet: { subscriptions: newsletter }, $set: { protectedData }}, {upsert:true});
     return res.json({success:true})
 })
 

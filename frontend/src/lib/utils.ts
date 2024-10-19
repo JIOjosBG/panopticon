@@ -48,14 +48,14 @@ export async function fetchRSSFeeds() {
   console.log('Result', result);
 }
 
-export async function postNewsletterName(user: string, newsletterName: string) {
+export async function postNewsletterName(user: string, newsletterName: string, protectedData: string) {
   try {
     const response = await fetch('http://localhost:3001/subscribe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ user, newsletter: newsletterName }),
+      body: JSON.stringify({ user, newsletter: newsletterName, protectedData }),
     });
 
     if (!response.ok) {

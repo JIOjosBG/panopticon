@@ -118,7 +118,7 @@ export async function worker(){
     const subscriptionCollection = db.collection('subscriptions');
     const records = await subscriptionCollection.find({}).toArray()
     const emails = []
-    for(let {subscriptions, lastUpdated, user} of records){
+    for(let {subscriptions, lastUpdated, protectedData} of records){
         const articlesToSend = []
         for(let newsletterName of subscriptions){
             const newsletter = allContent[newsletterName]
@@ -138,15 +138,13 @@ export async function worker(){
             }
         }
         if(articlesToSend.length)
-            emails.push({articlesToSend,user})
+            emails.push({articlesToSend,protectedData})
     }
     for(let email of emails){
-
-        // @TODO get properly get protected Data
         const task = await sendMail(
             `${email.articlesToSend.length} new articles for you`, 
             getHtmlFromArticles(email.articlesToSend),
-            '0x4129f2fc8fe4df4d236ae4e34192ae9d170afe37'
+            email.protectedData
         )
         console.log(task)
     }
