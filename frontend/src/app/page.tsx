@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { grantAccess } from '@/lib/iexec';
 import { fetchRSSFeeds, postNewsletterName, checkCurrentChain } from '@/lib/utils';
 import bannerImage from '../components/ui/banner.png'; // Tell webpack this JS file uses this image
+import panopticonTitle from '../components/ui/panopticon.svg'; // Tell webpack this JS file uses this image
 import Image from 'next/image'
 interface Newsletter {
   id: number;
@@ -264,7 +265,12 @@ const NewsletterBoard: React.FC = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-
+      <Image
+        alt="Panopticon"
+        src={panopticonTitle}
+        className="pb-4"
+      
+      />
       <div className="absolute top-[591px] left-[1229px] rounded-31xl bg-khaki flex flex-row items-end justify-end py-space-050 px-space-200 text-right text-xs text-gray-200">
         <div className="relative leading-[20px]">Promoted</div>
       </div>
@@ -291,12 +297,12 @@ const NewsletterBoard: React.FC = () => {
       </div>
 
       {/* Newsletter Listings */}
-      <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
         {Object.keys(newsletters).length && Object.values(newsletters).map((newsletter) => (
 
           <Card key={newsletter.title} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
-              <div className="flex flex-col md:flex-row justify-between">
+              <div className="flex flex-col-6 md:flex-row justify-between">
                 <div className="flex-1">
                   <h2 className="text-xl font-semibold mb-2">{newsletter.title}</h2>
                   <p className="text-gray-600 mb-4">{newsletter.description}</p>
