@@ -300,12 +300,13 @@ const NewsletterBoard: React.FC = () => {
             <CardContent className="p-6">
               <div className="flex flex-col-6 md:flex-row justify-between">
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold mb-2">{newsletter.title}</h2>
-                  <p className="text-gray-600 mb-4">{newsletter.description}</p>
+                  <h2 className="text-xl font-semibold mb-2 text-gray-600">{newsletter.title}</h2>
+                  {/* <Image alt="asd" width={300}  height={300} src={newsletter.image?.url}/> */}
+                  <p className="text-gray-600 text-sm mb-4">{newsletter.description.slice(0,150)}{newsletter.description.length>100 && '...'}</p>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Building2 className="h-4 w-4" />
-                      {newsletter.title}
+                        Tech news
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Mail className="h-4 w-4" />
@@ -314,8 +315,7 @@ const NewsletterBoard: React.FC = () => {
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Users className="h-4 w-4" />
-                      {/* {newsletter.subscribers.toLocaleString()} subscribers */}
-                      asd
+                      100k subscribers
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Clock className="h-4 w-4" />
@@ -326,13 +326,14 @@ const NewsletterBoard: React.FC = () => {
                 </div>
                 
                 <div className="mt-4 md:mt-0 md:text-right flex flex-col items-end">
-                  <div className="text-lg font-semibold text-green-600 mb-2">
-                    10 USD
+                  <div className="text-sm font-semibold text-teal-400 mb-2">
+                    FREE
                     {/* {formatPrice(newsletter.price)} */}
                   </div>
                   {subscriptions.includes(newsletter.title) ? (
                     <Button 
-                      className="mb-4 w-32"
+                      className="mb-4 bg-amber-950  w-32"
+                      size={'sm'}
                       variant="secondary"  // or any other variant you prefer for subscribed state
                       disabled
                     >
@@ -340,14 +341,15 @@ const NewsletterBoard: React.FC = () => {
                     </Button>
                   ) : (
                     <Button 
-                      className="mb-4 w-32"
+                      className="mb-4 bg-amber-950 w-32"
+                      size={'sm'}
                       onClick={() => handleSubscribe(newsletter.title)}
                     >
                       Subscribe
                     </Button>
                   )}
                   
-                  <Badge variant="secondary" className="mb-4">
+                  <Badge variant="secondary" className="bg-yellow-200 mb-4">
                     Promoted
                   </Badge>
                   
@@ -356,7 +358,7 @@ const NewsletterBoard: React.FC = () => {
 
               <div className="mt-4 flex flex-wrap gap-2">
                 {['crypto','web3', 'finance'].map((tag: string) => (
-                  <Badge key={tag} variant="outline">
+                  <Badge key={tag} className="bg-gray-100 text-gray-400" variant="outline">
                     {tag}
                   </Badge>
                 ))}
