@@ -23,6 +23,7 @@ import { postNewsletterName, checkCurrentChain } from '@/lib/utils';
 import bannerImage from '../components/ui/banner.png'; // Tell webpack this JS file uses this image
 import panopticonTitle from '../components/ui/panopticon.svg'; // Tell webpack this JS file uses this image
 import Image from 'next/image'
+
 interface Newsletter {
   id: number;
   title: string;
@@ -58,9 +59,6 @@ interface Newsletters{
   }
 }
 
-const { ethereum } = window as any;
-const iExecDataProtectorClient = new IExecDataProtector(ethereum);
-
 const NewsletterBoard: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -91,6 +89,9 @@ const NewsletterBoard: React.FC = () => {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setSearchTerm(e.target.value);
   };
+
+  const { ethereum } = window as any;
+  const iExecDataProtectorClient = new IExecDataProtector(ethereum);
 
   // Check if there is a web3 wallet installed
   const checkIfWalletIsConnected = async () => {
