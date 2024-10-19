@@ -26,3 +26,11 @@ Open [http://localhost:3000](http://localhost:3000) with your browser (yes, for 
 To subscribe to your preferred crypto newsletter, click on the Subscribe button. You should sign two different transactions, one for encrypting your email address and the second one to grant access to the organization behind the newsletter to send you regular newsletters.
 
 Once both transactions have been signed and are confirmed on the blockchain, you should get a confirmation email after few minutes confirming your new subscription as well as including the previous newsletter for you to have some good read material while you wait for the next newsletter to be timely delivered to you.
+
+## Future Developments
+
+- A unsubscribe function will be added
+
+- There will be a different page for companies to send their newsletters to their subscribers directly from our UI
+
+- Will add many more memes (specifically, cats with thumbs)
