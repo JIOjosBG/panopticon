@@ -27,6 +27,10 @@ To subscribe to your preferred crypto newsletter, click on the Subscribe button.
 
 Once both transactions have been signed and are confirmed on the blockchain, you should get a confirmation email after few minutes confirming your new subscription as well as including the previous newsletter for you to have some good read material while you wait for the next newsletter to be timely delivered to you.
 
+## Demo
+
+[https://www.youtube.com/watch?v=DI9LfnOomYM](https://www.youtube.com/watch?v=DI9LfnOomYM)
+
 ## Future Developments
 
 - A unsubscribe function will be added
