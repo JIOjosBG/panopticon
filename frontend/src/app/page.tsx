@@ -228,7 +228,7 @@ const NewsletterBoard: React.FC = () => {
       const protectedDataResponse =
         await iExecDataProtectorClient.core.protectData({
           data: {
-            email: process.env.SECRET_EMAIL || '',
+            email: email || '',
           },
           name: 'DataProtector Panopticon - Email protected',
         });
